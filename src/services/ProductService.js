@@ -86,7 +86,6 @@ const updateUser = (id, data) => {
             const checkUser = await User.findOne({
                 _id: id
             });
-            console.log("🚀 ~ file: UserService.js:88 ~ returnnewPromise ~ checkUser:", checkUser)
             if (checkUser === null) {
                 resolve({
                     status: 'error',
@@ -94,8 +93,6 @@ const updateUser = (id, data) => {
                 })
             }
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
-            console.log("🚀 ~ file: UserService.js:96 ~ returnnewPromise ~ updateUser:", updateUser)
-
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
