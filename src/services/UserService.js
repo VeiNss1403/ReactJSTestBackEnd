@@ -2,7 +2,7 @@ const User = require('../models/UserModel');
 const bcrypt = require('bcrypt');
 const { generalRefreshToken, generalAccessToken } = require('./JwtService');
 
-function createUser(newUser) {
+const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
         const { name, email, password, confirmPassword, phone } = newUser;
         try {
@@ -134,7 +134,7 @@ const deleteUser = (id) => {
     })
 }
 
-const getAllUser = (id) => {
+const getAllUser = () => {
     return new Promise(async (resolve, reject) => {
         try {
             const allUser = await User.find();
@@ -163,7 +163,6 @@ const getUserDetail = (id) => {
                     message: 'The user is not defined',
                 })
             }
-            await User.findByIdAndDelete(id);
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',

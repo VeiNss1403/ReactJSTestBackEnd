@@ -1,32 +1,32 @@
-const User = require('../models/UserModel');
-const bcrypt = require('bcrypt');
-const { generalRefreshToken, generalAccessToken } = require('./JwtService');
+const Product = require('../models/ProductModel');
 
-function createUser(newUser) {
+const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name, email, password, confirmPassword, phone } = newUser;
+        const { name, image, type, price, countInStock, rating, description } = newProduct;
         try {
-            const checkUser = await User.findOne({
-                email: email,
+            const checkProduct = await Product.findOne({
+                name: name,
             });
-            if (checkUser !== null) {
+            if (checkProduct !== null) {
                 resolve({
                     status: 'OK',
-                    message: 'The email is already'
+                    message: 'The name of product is already'
                 });
             }
-            const hash = bcrypt.hashSync(password, 10);
-            const createdUser = await User.create({
+            const newProduct = await Product.create({
                 name,
-                email,
-                password: hash,
-                phone
+                image,
+                type,
+                price,
+                countInStock,
+                rating,
+                description
             });
-            if (createdUser) {
+            if (newProduct) {
                 resolve({
                     status: "OK",
                     message: 'Successfully created',
-                    data: createdUser
+                    data: newProduct
                 });
             }
 
@@ -35,42 +35,25 @@ function createUser(newUser) {
             reject(error);
         }
     });
-}
-
-const loginUser = (userLogin) => {
+};
+const updateProduct = (id, data) => {
     return new Promise(async (resolve, reject) => {
-        const { name, email, password, confirmPassword, phone } = userLogin;
         try {
-            const checkUser = await User.findOne({
-                email: email,
-            })
-            if (checkUser === null) {
+            const checkProduct = await Product.findOne({
+                _id: id
+            });
+            if (checkProduct === null) {
                 resolve({
-                    status: 'OK',
-                    message: 'The userr is not defined',
+                    status: 'error',
+                    message: 'The product is not defined',
                 })
             }
-            const comparePassword = bcrypt.compareSync(password, checkUser.password)
+            const updateProduct = await Product.findByIdAndUpdate(id, data, { new: true });
 
-            if (!comparePassword) {
-                resolve({
-                    status: 'OK',
-                    message: 'The password or user is incorrect',
-                })
-            }
-            const access_token = await generalAccessToken({
-                id: checkUser.id,
-                isAdmin: checkUser.isAdmin
-            })
-            const refresh_token = await generalRefreshToken({
-                id: checkUser.id,
-                isAdmin: checkUser.isAdmin
-            })
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                access_token,
-                refresh_token
+                data: updateProduct
             })
 
         }
@@ -79,24 +62,22 @@ const loginUser = (userLogin) => {
         }
     })
 }
-
-const updateUser = (id, data) => {
+const getDetail = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const checkUser = await User.findOne({
+            const product = await Product.findOne({
                 _id: id
             });
-            if (checkUser === null) {
+            if (product === null) {
                 resolve({
                     status: 'error',
                     message: 'The user is not defined',
                 })
             }
-            const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                data: updateUser
+                data: product
             })
 
         }
@@ -105,20 +86,19 @@ const updateUser = (id, data) => {
         }
     })
 }
-
-const deleteUser = (id) => {
+const deleteProduct = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const checkUser = await User.findOne({
+            const checkProduct = await Product.findOne({
                 _id: id
             });
-            if (checkUser === null) {
+            if (checkProduct === null) {
                 resolve({
                     status: 'error',
-                    message: 'The user is not defined',
+                    message: 'The product is not defined',
                 })
             }
-            await User.findByIdAndDelete(id);
+            await Product.findByIdAndDelete(id);
             resolve({
                 status: 'OK',
                 message: 'Delete user SUCCESS',
@@ -131,40 +111,48 @@ const deleteUser = (id) => {
     })
 }
 
-const getAllUser = (id) => {
+const getAllProduct = (limit, page, sort, filter) => {
+    console.log("🚀 ~ file: ProductService.js:115 ~ getAllProduct ~ filter:", filter)
     return new Promise(async (resolve, reject) => {
         try {
-            const allUser = await User.find();
-            resolve({
-                status: 'OK',
-                message: 'SUCCESS',
-                data: allUser
-            })
-
-        }
-        catch (error) {
-            reject(error)
-        }
-    })
-}
-
-const getUserDetail = (id) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const user = await User.findOne({
-                _id: id
-            });
-            if (user === null) {
+            const totalProducts = await Product.count()
+            if (filter) {
+                const label = filter[0];
+                const allProductFilter = await Product.find({
+                    [label]: {'$regex': filter[1]},
+                }).limit(limit).skip(page * limit)
                 resolve({
-                    status: 'error',
-                    message: 'The user is not defined',
+                    status: 'OK',
+                    message: 'SUCCESS',
+                    data: allProductFilter,
+                    total: totalProducts,
+                    pageCurrent: Number(page + 1),
+                    totalPages: Math.ceil(totalProducts / limit)
                 })
             }
-            await User.findByIdAndDelete(id);
+            if (sort) {
+                const objectsSort = {}
+                objectsSort[sort[1]] = sort[0]
+                const allProductSort = await Product.find().limit(limit).skip(page * limit).sort(objectsSort)
+                resolve({
+                    status: 'OK',
+                    message: 'SUCCESS',
+                    data: allProductSort,
+                    total: totalProducts,
+                    pageCurrent: Number(page + 1),
+                    totalPages: Math.ceil(totalProducts / limit)
+                })
+            }
+            const allProduct = await Product.find().limit(limit).skip(page * limit).sort({
+                name: sort
+            })
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                data: user
+                data: allProduct,
+                total: totalProducts,
+                pageCurrent: Number(page + 1),
+                totalPages: Math.ceil(totalProducts / limit)
             })
 
         }
@@ -174,14 +162,11 @@ const getUserDetail = (id) => {
     })
 }
 
-
-
 module.exports = {
-    createUser,
-    loginUser,
-    updateUser,
-    deleteUser,
-    getAllUser,
-    getUserDetail,
+    createProduct,
+    updateProduct,
+    getDetail,
+    deleteProduct,
+    getAllProduct,
 
 }

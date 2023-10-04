@@ -1,28 +1,84 @@
-const UserService = require('../services/UserService');
+const ProductService = require('../services/ProductService');
 
 const createProduct = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, phone } = req.body;
-        const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-        const isCheckEmail = reg.test(email)
+        const { name, image, type, price, countInStock, rating, description } = req.body;
+        console.log("🚀 ~ file: ProductController.js:6 ~ createProduct ~ req.body:", req.body)
 
-        if (!name || !email || !password || !confirmPassword || !phone) {
+        if (!name || !image || !type || !price || !countInStock || !rating || !description) {
             return res.status(200).jason({
                 status: 'error',
                 message: 'The input is required',
             })
-        } else if (!isCheckEmail) {
-            return res.status(200).jason({
-                status: 'error',
-                message: 'The input is email',
-            })
-        } else if (password !== confirmPassword) {
+        }
+        const response = await ProductService.createProduct(req.body);
+        return res.status(200).json(response)
+    }
+    catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+const updateProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const data = req.body
+        if (!productId) {
             return res.status(200).json({
                 status: 'error',
-                message: 'Passwords do not match'
+                message: 'The product is required'
             })
         }
-        const response = await UserService.createUser(req.body);
+        const response = await ProductService.updateProduct(productId, data);
+        return res.status(200).json(response)
+    }
+    catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+const getDetail = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!productId) {
+            return res.status(200).json({
+                status: 'error',
+                message: 'The user is required'
+            })
+        }
+        const response = await ProductService.getDetail(productId);
+        return res.status(200).json(response)
+    }
+    catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!productId) {
+            return res.status(200).json({
+                status: 'error',
+                message: 'The user is required'
+            })
+        }
+        const response = await ProductService.deleteProduct(productId);
+        return res.status(200).json(response)
+    }
+    catch (error) {
+        return res.status(404).json({
+            message: error
+        })
+    }
+}
+const getAllProduct = async (req, res) => {
+    try {
+        const { limit, page, sort, filter } = req.query;
+        const response = await ProductService.getAllProduct(Number(limit || 8), Number(page || 0), sort, filter);
         return res.status(200).json(response)
     }
     catch (error) {
@@ -33,5 +89,9 @@ const createProduct = async (req, res) => {
 }
 
 module.exports = {
-    createProduct
+    createProduct,
+    updateProduct,
+    getDetail,
+    deleteProduct,
+    getAllProduct,
 }
