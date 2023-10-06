@@ -3,27 +3,6 @@ const JwtService = require('../services/JwtService');
 
 const createUser = async (req, res) => {
     try {
-        console.log(req.body);
-        const { name, email, password, confirmPassword, phone } = req.body;
-        const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-        const isCheckEmail = reg.test(email)
-
-        if (!name || !email || !password || !confirmPassword || !phone) {
-            return res.status(200).jason({
-                status: 'error',
-                message: 'The input is required',
-            })
-        } else if (!isCheckEmail) {
-            return res.status(200).jason({
-                status: 'error',
-                message: 'The input is email',
-            })
-        } else if (password !== confirmPassword) {
-            return res.status(200).json({
-                status: 'error',
-                message: 'Passwords do not match'
-            })
-        }
         const response = await UserService.createUser(req.body);
         return res.status(200).json(response)
     }
@@ -35,28 +14,13 @@ const createUser = async (req, res) => {
 }
 const loginUser = async (req, res) => {
     try {
-        const { name, email, password, confirmPassword, phone } = req.body;
-        const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-        const isCheckEmail = reg.test(email)
-
-        if (!name || !email || !password || !confirmPassword || !phone) {
-            return res.status(200).jason({
-                status: 'error',
-                message: 'The input is required',
-            })
-        } else if (!isCheckEmail) {
-            return res.status(200).jason({
-                status: 'error',
-                message: 'The input is email',
-            })
-        } else if (password !== confirmPassword) {
-            return res.status(200).json({
-                status: 'error',
-                message: 'Passwords do not match'
-            })
-        }
         const response = await UserService.loginUser(req.body);
-        return res.status(200).json(response)
+        const {refresh_token, ...newreponse} = response
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            Secure: true,
+        })
+        return res.status(200).json(newreponse)
     }
     catch (error) {
         return res.status(404).json({
@@ -137,7 +101,7 @@ const getUserDetail = async (req, res) => {
 
 const refreshToken = async (req, res) => {
     try {
-        const token = req.headers.token.split(' ')[1]
+        const token = req.cookies.refresh_token
         if (!token) {
             return res.status(200).json({
                 status: 'error',

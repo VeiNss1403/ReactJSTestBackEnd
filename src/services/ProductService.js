@@ -35,7 +35,7 @@ const createProduct = (newProduct) => {
             reject(error);
         }
     });
-};
+}
 const updateProduct = (id, data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -112,7 +112,6 @@ const deleteProduct = (id) => {
 }
 
 const getAllProduct = (limit, page, sort, filter) => {
-    console.log("🚀 ~ file: ProductService.js:115 ~ getAllProduct ~ filter:", filter)
     return new Promise(async (resolve, reject) => {
         try {
             const totalProducts = await Product.count()

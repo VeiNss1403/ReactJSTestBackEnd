@@ -4,24 +4,40 @@ const { generalRefreshToken, generalAccessToken } = require('./JwtService');
 
 const createUser = (newUser) => {
     return new Promise(async (resolve, reject) => {
-        const { name, email, password, confirmPassword, phone } = newUser;
+        const { email, password, confirmPassword } = newUser;
         try {
             const checkUser = await User.findOne({
                 email: email,
             });
-            if (checkUser !== null) {
+            const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+            const isCheckEmail = reg.test(email)
+            if (!email || !password || !confirmPassword) {
                 resolve({
-                    status: 'OK',
-                    message: 'The email is already'
+                    status: 'error',
+                    message: 'The input is required',
+                })
+            } else if (checkUser !== null) {
+                resolve({
+                    status: 'error',
+                    message: 'The email is already',
                 });
+            } else if (!isCheckEmail) {
+                resolve({
+                    status: 'error',
+                    message: 'The input is email',
+                })
+            } else if (password !== confirmPassword) {
+                resolve({
+                    status: 'error',
+                    message: 'Passwords do not match',
+                })
             }
             const hash = bcrypt.hashSync(password, 10);
             const createdUser = await User.create({
-                name,
                 email,
                 password: hash,
-                phone
             });
+
             if (createdUser) {
                 resolve({
                     status: "OK",
@@ -39,22 +55,34 @@ const createUser = (newUser) => {
 
 const loginUser = (userLogin) => {
     return new Promise(async (resolve, reject) => {
-        const { name, email, password, confirmPassword, phone } = userLogin;
+        const { email, password } = userLogin;
         try {
+            const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+            const isCheckEmail = reg.test(email)
             const checkUser = await User.findOne({
                 email: email,
             })
-            if (checkUser === null) {
+            if (!email || !password) {
                 resolve({
-                    status: 'OK',
-                    message: 'The userr is not defined',
+                    status: 'error',
+                    message: 'The input is required'
+                })
+            } else if (!isCheckEmail) {
+                resolve({
+                    status: 'error',
+                    message: 'The input is email'
+                })
+            } else if (checkUser === null) {
+                resolve({
+                    status: 'error',
+                    message: 'The user is not defined',
                 })
             }
             const comparePassword = bcrypt.compareSync(password, checkUser.password)
 
             if (!comparePassword) {
                 resolve({
-                    status: 'OK',
+                    status: 'error',
                     message: 'The password or user is incorrect',
                 })
             }
@@ -86,15 +114,11 @@ const updateUser = (id, data) => {
             const checkUser = await User.findOne({
                 _id: id
             });
-            console.log("🚀 ~ file: UserService.js:88 ~ returnnewPromise ~ checkUser:", checkUser)
-            if (checkUser === null) {
                 resolve({
                     status: 'error',
                     message: 'The user is not defined',
                 })
-            }
             const updateUser = await User.findByIdAndUpdate(id, data, { new: true });
-            console.log("🚀 ~ file: UserService.js:96 ~ returnnewPromise ~ updateUser:", updateUser)
 
             resolve({
                 status: 'OK',
