@@ -44,7 +44,7 @@ const getDetail = async (req, res) => {
         if (!productId) {
             return res.status(200).json({
                 status: 'error',
-                message: 'The user is required'
+                message: 'The product is required'
             })
         }
         const response = await ProductService.getDetail(productId);
@@ -62,7 +62,7 @@ const deleteProduct = async (req, res) => {
         if (!productId) {
             return res.status(200).json({
                 status: 'error',
-                message: 'The user is required'
+                message: 'The product is required'
             })
         }
         const response = await ProductService.deleteProduct(productId);

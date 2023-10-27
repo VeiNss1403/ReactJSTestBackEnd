@@ -71,7 +71,7 @@ const getDetail = (id) => {
             if (product === null) {
                 resolve({
                     status: 'error',
-                    message: 'The user is not defined',
+                    message: 'The product is not defined',
                 })
             }
             resolve({
