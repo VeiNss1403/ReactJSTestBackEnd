@@ -110,7 +110,21 @@ const deleteProduct = (id) => {
         }
     })
 }
+const deleteManyProduct = (ids) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await Product.deleteMany( );
+            resolve({
+                status: 'OK',
+                message: 'Delete user SUCCESS',
+            })
 
+        }
+        catch (error) {
+            reject(error)
+        }
+    })
+}
 const getAllProduct = (limit, page, sort, filter) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -118,7 +132,7 @@ const getAllProduct = (limit, page, sort, filter) => {
             if (filter) {
                 const label = filter[0];
                 const allProductFilter = await Product.find({
-                    [label]: {'$regex': filter[1]},
+                    [label]: { '$regex': filter[1] },
                 }).limit(limit).skip(page * limit)
                 resolve({
                     status: 'OK',
@@ -167,5 +181,5 @@ module.exports = {
     getDetail,
     deleteProduct,
     getAllProduct,
-
+    deleteManyProduct,
 }
