@@ -2,7 +2,7 @@ const Product = require('../models/ProductModel');
 
 const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name, image, type, price, countInStock, rating, description } = newProduct;
+        const { name, image, type, price, countInStock, rating, description, discount } = newProduct;
         try {
             const checkProduct = await Product.findOne({
                 name: name,
@@ -20,7 +20,8 @@ const createProduct = (newProduct) => {
                 price,
                 countInStock,
                 rating,
-                description
+                description,
+                discount,
             });
             if (newProduct) {
                 resolve({
@@ -113,7 +114,7 @@ const deleteProduct = (id) => {
 const deleteManyProduct = (ids) => {
     return new Promise(async (resolve, reject) => {
         try {
-            await Product.deleteMany( );
+            await Product.deleteMany();
             resolve({
                 status: 'OK',
                 message: 'Delete user SUCCESS',
@@ -127,6 +128,7 @@ const deleteManyProduct = (ids) => {
 }
 const getAllProduct = (limit, page, sort, filter) => {
     return new Promise(async (resolve, reject) => {
+        let allProduct = []
         try {
             const totalProducts = await Product.count()
             if (filter) {
@@ -156,9 +158,11 @@ const getAllProduct = (limit, page, sort, filter) => {
                     totalPages: Math.ceil(totalProducts / limit)
                 })
             }
-            const allProduct = await Product.find().limit(limit).skip(page * limit).sort({
-                name: sort
-            })
+            if (!limit) {
+                allProduct = await Product.find()
+            } else {
+                allProduct = await Product.find().limit(limit).skip(page * limit)
+            }  
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
