@@ -10,6 +10,8 @@ const createOrder = async (req, res) => {
             })
         }
         const response = await OrderService.createOrder(req.body)
+        console.log("🚀 ~ file: OrderController.js:13 ~ createOrder ~ response:", response)
+        
         return res.status(200).json(response)
     } catch (e) {
         return res.status(404).json({
