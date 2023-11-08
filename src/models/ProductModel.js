@@ -10,7 +10,13 @@ const productSchema = new mongoose.Schema(
         rating: { type: Number, required: true },
         description: { type: String },
         discount: { type: Number },
-        selled: { type: Number }
+        selled: { type: Number },
+        miniType: { type: String },
+        countRating: { type: Number },
+        forPerson: { type: String },
+        brand: { type: String },
+        country: { type: String },
+        ingredient:{ type: String,}
     },
     {
         timestamps: true,
