@@ -3,42 +3,44 @@ const ProductService = require("../services/ProductService");
 const createProduct = async (req, res) => {
   try {
     const {
-        name,
-        image,
-        type,
-        countInStock,
-        price,
-        rating,
-        discount,
-        miniType,
-        forPerson,
-        brand,
-        country,
-        ingredient,
-      } = req.body;
-  
-      // Kiểm tra xem tất cả trường dữ liệu cần thiết có được cung cấp không
-      const requiredFields = [
-        name,
-        image,
-        type,
-        countInStock,
-        price,
-        rating,
-        discount,
-        miniType,
-        forPerson,
-        brand,
-        country,
-        ingredient,
-      ];
-  
-      if (requiredFields.some(field => field === undefined || field === '')) {
-        return res.status(400).json({
-          status: "ERR",
-          message: "All required fields must be provided",
-        });
-      }
+      name,
+      image,
+      type,
+      countInStock,
+      price,
+      rating,
+      discount,
+      miniType,
+      forPerson,
+      brand,
+      country,
+      ingredient,
+      miniImages,
+    } = req.body;
+
+    // Kiểm tra xem tất cả trường dữ liệu cần thiết có được cung cấp không
+    const requiredFields = [
+      name,
+      image,
+      type,
+      countInStock,
+      price,
+      rating,
+      discount,
+      miniType,
+      forPerson,
+      brand,
+      country,
+      ingredient,
+      miniImages,
+    ];
+
+    if (requiredFields.some((field) => field === undefined || field === "")) {
+      return res.status(400).json({
+        status: "ERR",
+        message: "All required fields must be provided",
+      });
+    }
     const response = await ProductService.createProduct(req.body);
     return res.status(200).json(response);
   } catch (e) {

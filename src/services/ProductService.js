@@ -16,6 +16,7 @@ const createProduct = (newProduct) => {
       brand,
       country,
       ingredient,
+      miniImages,
     } = newProduct;
     try {
       const checkProduct = await Product.findOne({
@@ -42,6 +43,7 @@ const createProduct = (newProduct) => {
         country,
         ingredient,
         countRating: 0,
+        miniImages: miniImages || [],
       });
       if (newProduct) {
         resolve({
