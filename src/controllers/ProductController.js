@@ -150,6 +150,16 @@ const getAllType = async (req, res) => {
     });
   }
 };
+const getAllMiniType = async (req, res) => {
+  try {
+    const response = await ProductService.getAllMiniType(req.params.type);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
 
 module.exports = {
   createProduct,
@@ -159,4 +169,5 @@ module.exports = {
   getAllProduct,
   deleteMany,
   getAllType,
+  getAllMiniType,
 };

@@ -149,7 +149,9 @@ const getDetailsProduct = (id) => {
 
 const getAllProduct = async (limit, page, sort, filter) => {
   try {
-    const query = filter ? { [filter[0]]: { $regex: filter[1], $options: 'i' } } : {};
+    const query = filter
+      ? { [filter[0]]: { $regex: filter[1], $options: "i" } }
+      : {};
     const objectSort = sort
       ? { [sort[1]]: sort[0] }
       : { createdAt: -1, updatedAt: -1 };
@@ -187,6 +189,21 @@ const getAllType = () => {
     }
   });
 };
+const getAllMiniType = (type) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Thay thế "type" bằng giá trị cụ thể hoặc biến khi gọi hàm
+      const miniTypes = await Product.find({ type: type }).distinct("miniType");
+      resolve({
+        status: "OK",
+        message: "Success",
+        data: miniTypes,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   createProduct,
@@ -196,4 +213,5 @@ module.exports = {
   getAllProduct,
   deleteManyProduct,
   getAllType,
+  getAllMiniType,
 };
