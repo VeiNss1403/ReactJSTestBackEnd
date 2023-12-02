@@ -168,7 +168,7 @@ const refreshToken = async (req, res) => {
 const logoutUser = async (req, res) => {
   try {
     res.clearCookies("refresh_token");
-    return res.status(400).json({
+    return res.status(200).json({
       status: "OK",
       message: "Logout successfully",
     });
