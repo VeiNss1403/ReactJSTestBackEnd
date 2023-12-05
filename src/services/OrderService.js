@@ -90,10 +90,10 @@ const createOrder = (newOrder) => {
   });
 };
 
-const updateOrder = async (req, res) => {
+const updateOrder = async (id, data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const checkOrder = await Product.findOne({
+      const checkOrder = await Order.findOne({
         _id: id,
       });
       if (checkOrder === null) {
@@ -103,7 +103,7 @@ const updateOrder = async (req, res) => {
         });
       }
 
-      const updatedOrder = await Product.findByIdAndUpdate(id, data, {
+      const updatedOrder = await Order.findByIdAndUpdate(id, data, {
         new: true,
       });
       resolve({
