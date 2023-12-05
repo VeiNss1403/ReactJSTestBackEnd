@@ -192,7 +192,6 @@ const getAllType = () => {
 const getAllMiniType = (type) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // Thay thế "type" bằng giá trị cụ thể hoặc biến khi gọi hàm
       const miniTypes = await Product.find({ type: type }).distinct("miniType");
       resolve({
         status: "OK",

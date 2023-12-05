@@ -35,7 +35,24 @@ const createOrder = async (req, res) => {
     });
   }
 };
-
+const updateOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const data = req.body;
+    if (!orderId) {
+      return res.status(400).json({
+        status: "ERR",
+        message: "The orderId is required",
+      });
+    }
+    const response = await OrderService.updateProduct(orderId, data);
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
 const getAllOrderDetails = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -108,4 +125,5 @@ module.exports = {
   getDetailsOrder,
   cancelOrderDetails,
   getAllOrder,
+  updateOrder,
 };
