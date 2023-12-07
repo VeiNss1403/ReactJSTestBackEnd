@@ -150,6 +150,27 @@ const getAllType = async (req, res) => {
     });
   }
 };
+const getAllBrand = async (req, res) => {
+  try {
+    const response = await ProductService.getAllBrand();
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
+
+const getAllForPerson = async (req, res) => {
+  try {
+    const response = await ProductService.getAllForPerson();
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(404).json({
+      message: e,
+    });
+  }
+};
 const getAllMiniType = async (req, res) => {
   try {
     const response = await ProductService.getAllMiniType(req.params.type);
@@ -170,4 +191,6 @@ module.exports = {
   deleteMany,
   getAllType,
   getAllMiniType,
+  getAllBrand,
+  getAllForPerson,
 };

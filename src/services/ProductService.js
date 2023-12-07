@@ -189,6 +189,34 @@ const getAllType = () => {
     }
   });
 };
+const getAllBrand = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const allBrand = await Product.distinct("brand");
+      resolve({
+        status: "OK",
+        message: "Success",
+        data: allBrand,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+const getAllForPerson = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const allForPerson = await Product.distinct("forPerson");
+      resolve({
+        status: "OK",
+        message: "Success",
+        data: allForPerson,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 const getAllMiniType = (type) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -213,4 +241,6 @@ module.exports = {
   deleteManyProduct,
   getAllType,
   getAllMiniType,
+  getAllBrand,
+  getAllForPerson,
 };
