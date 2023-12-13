@@ -36,10 +36,10 @@ const sendEmailCreateOrder = async (email, orderItems) => {
   let info = await transporter.sendMail({
     from: process.env.MAIL_ACCOUNT, // sender address
     to: email, // list of receivers
-    subject: "Bạn đã đặt hàng tại Vivita", // Subject line
+    subject: "Bạn đã đặt hàng tại ECONUTRI", // Subject line
     text: "Hello world?", // plain text body
     html: `
-    <div><b>Bạn đã đặt hàng thành công tại Vivita</b></div> 
+    <div><b>Bạn đã đặt hàng thành công tại ECONUTRI</b></div> 
     ${listItem}
     <div><b>Tổng giá trị đơn hàng: ${total} VND </b></div>`,
     attachments: attachImage,

@@ -18,7 +18,6 @@ const createProduct = async (req, res) => {
       miniImages,
     } = req.body;
 
-    // Kiểm tra xem tất cả trường dữ liệu cần thiết có được cung cấp không
     const requiredFields = [
       name,
       image,

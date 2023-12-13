@@ -152,14 +152,12 @@ const getAllProduct = async (limit, page, sort, filter) => {
     const query = filter
       ? { [filter[0]]: { $regex: filter[1], $options: "i" } }
       : {};
-    const objectSort = sort
-      ? { [sort[1]]: sort[0] }
-      : { createdAt: -1, updatedAt: -1 };
+    const objectSort = sort ? sort : { createdAt: -1, updatedAt: -1 };
 
     const allProduct = await Product.find(query)
+      .sort(objectSort)
       .limit(limit)
-      .skip(page * limit)
-      .sort(objectSort);
+      .skip(page * limit);
     const countProduct = await Product.find(query).countDocuments();
     const response = {
       status: "OK",
